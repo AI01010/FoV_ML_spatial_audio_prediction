@@ -1,0 +1,105 @@
+Datasets for research papers
+
+Audio-visual Saliency
+for Omnidirectional Videos ( their dataset will be released ) Couldn't find them 
+
+Your Attention is Unique: Detecting 360-Degree Video Saliency
+in Head-Mounted Display for Head Movement Prediction
+
+GitHub path: phananh1010/PanoSaliency
+
+Spatial Audio in 360° Videos: Does it influence Visual Attention?
+https://zenodo.org/records/17099830?utm_source
+https://github.com/phananh1010/PanoSaliency?utm_source
+
+The Prediction of Saliency Map for Head and Eye
+Movements in 360 Degree Images
+
+https://2017.acmmmsys.org/wp-content/uploads/2017/05/Jesus-Gutierrez.pdf?utm_source not data set but helpful slides 
+Towards Audio-Visual Saliency Prediction for Omnidirectional Video with Spatial Audio
+https://github.com/FannyChao/AVS360_audiovisual_saliency_360?utm_source code 
+https://arxiv.org/html/2408.05411v1?utm_source helpful site for audio 
+Unified Audio-Visual Saliency Model for  Omnidirectional Videos With Spatial Audio
+https://graphics.unizar.es/projects/D-SAV360/#video
+https://openneuro.org/datasets/ds005628/versions/1.0.0?utm_source
+https://github.com/cozcinar/360_Audio_Visual_ICMEW2020
+https://v-sense.scss.tcd.ie/research/360audiovisualperception/
+
+
+Viewing Behavior Supported Visual Saliency Predictor for 360 Degree Videos
+
+360ProbDASH: Improving QoE of 360 Video Streaming Using Tile-based HTTP Adaptive Streaming
+A Taxonomy and Dataset for 360◦ Videos
+https://gitlab.com/UTDdslab/360dataset 
+Gaze Prediction in Dynamic 360◦ Immersive Videos
+https://github.com/xuyanyu-shh/VR-EyeTracking/tree/master
+Not updated 
+Spatiotemporal Characteristics of 360-Degree Basic Attention
+https://www.nature.com/articles/s41598-019-52313-3#Sec17
+open the article → scroll to Supplementary information → Dataset 1 / Dataset 2 / Dataset 3.
+Synergistic Temporal-Spatial User-Aware Viewport Prediction for Optimal Adaptive 360-Degree Video Streaming
+https://arxiv.org/abs/2403.17708?utm_source
+Go under data and media all are their 
+https://drive.google.com/drive/folders/1g85yjNeFpTD_R6mMyQk9hy7oQrWaRiE_
+Data set 
+
+LCR360: Efficient Head Movement Prediction and Viewport Sharing in 360◦ Video Streaming
+
+Correlation between Entropy and Prediction Error in VR Head Motion Trajectories
+
+Exploring Entropy-Based Solutions for Trajectory Prediction in Virtual Reality
+Requested data sets 
+The prediction of head and eye movement for 360 degree images
+Gaze Prediction in Dynamic 360◦ Immersive Videos https://github.com/xuyanyu-shh/VR-EyeTracking No dataset
+
+https://docs.google.com/document/d/1If-JGlmWQ5t7zPEw8YeS9ujOiOgBSo0Z8uQiFLvtGec/edit?tab=t.0 
+
+
+(C) Inspect DHF1K sample clips and baseline code (large-scale video saliency dataset) → https://github.com/wenguanwang/DHF1K
+(D) Explore the Awesome Video Saliency GitHub list for project ideas → https://github.com/hoangthangta/Awesome-Video-Saliency-Prediction
+
+
+Cleaned Data:
+https://drive.google.com/drive/folders/1zx5rMhHDtffJAC0MMnuwnkfA9jDtPaHY?usp=sharing
+
+DSAV360: 
+https://graphics.unizar.es/projects/D-SAV360/ 
+
+AVS 360 dataset we believe uses these files:
+https://www.dropbox.com/scl/fi/impeo1lq54copxv2x8i85/dataset_public.zip?rlkey=hg4obm9ea0kdnwmin6f6r2zl3&e=1&dl=0
+https://www.dropbox.com/scl/fi/6wtihe3lm867of1xwp4e4/videos.zip?rlkey=t4wh0fvb3f34no8xxc6zv6zed&e=1&dl=0
+
+More links:
+https://drive.google.com/drive/folders/1nXZAT6vu2Cnv0LRGSFQcb6CRn-1bK5mN
+
+https://gitlab.com/UTDdslab/360dataset
+
+https://github.com/FannyChao/AVS360_audiovisual_saliency_360
+
+https://www.kaggle.com/datasets/programmer3/multi-sensory-vr-network-performance-dataset/data
+
+https://www.kaggle.com/datasets/arbindagraharibaniya/360uhd
+
+https://dl.acm.org/doi/10.1145/3204949.3208139#:~:text=References24-,Abstract,from%20raw%20data%20are%20provided.
+
+https://dataverse.tdl.org/dataset.xhtml?persistentId=doi:10.18738/T8/L64SHD#:~:text=Recently%2C%20there%20has%20been%20a,egok360.github.io/.
+
+https://icml.cc/virtual/2025/poster/43952
+
+https://www.insta360.com/cn/product/insta360-pro2
+
+360 yt videos:
+https://www.youtube.com/watch?v=A0pgC5L7bM8
+https://www.youtube.com/watch?v=ZvZ7da8JBUk
+https://www.youtube.com/watch?v=qq1dTbrG264 
+https://www.youtube.com/watch?v=G8pABGosD38
+https://www.youtube.com/watch?v=fryDy9YcbI4
+
+https://www.youtube.com/watch?v=VGL3x3Cc1io
+
+
+Papers:
+https://docs.google.com/document/d/1LNC5-ta1DuH3hh-ZaVFGB14Dl-BbbWUDgEXkVC3PHPs/edit?tab=t.6qre2zhld6oq 
+
+Repo: 
+https://github.com/AI01010/FoV_ML_spatial_audio_prediction 
