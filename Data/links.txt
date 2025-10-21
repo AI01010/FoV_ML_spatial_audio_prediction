@@ -98,4 +98,8 @@ https://www.youtube.com/watch?v=fryDy9YcbI4
 https://www.youtube.com/watch?v=VGL3x3Cc1io
 
 
+Papers:
+https://docs.google.com/document/d/1LNC5-ta1DuH3hh-ZaVFGB14Dl-BbbWUDgEXkVC3PHPs/edit?tab=t.6qre2zhld6oq 
 
+Repo: 
+https://github.com/AI01010/FoV_ML_spatial_audio_prediction 
