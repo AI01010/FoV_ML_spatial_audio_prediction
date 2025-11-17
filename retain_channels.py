@@ -246,20 +246,28 @@ def main():
             "-b:a","512k",
             "-movflags","+faststart"
         ]
+
+        # --- EBU loudnorm filter ---
+        loudnorm_filter = "loudnorm=I=-23:TP=-2:LRA=7"
+
         if upmix:
+            # build pan filter, then chain loudnorm
             if ch == 1:
                 # duplicate mono to 4 channels
                 pan = "pan=4c|c0=c0|c1=c0|c2=c0|c3=c0"
             else:
                 # stereo to 4ch (simple duplication to back channels)
                 pan = "pan=4c|c0=FL|c1=FR|c2=FL|c3=FR"
-            reencode += ["-filter:a", pan]
+            filter_chain = f"{pan}, {loudnorm_filter}"
+            reencode += ["-af", filter_chain]
         else:
-            # If source already ≥4ch, keep 4ch
+            # no upmix, just loudnorm
+            reencode += ["-af", loudnorm_filter]
+
+            # Keep original channel count or enforce 4ch if already ≥4
             if ch >= 4:
-                reencode += ["-ac","4"]
+                reencode += ["-ac", "4"]
             else:
-                # keep original channel count (no fake 4ch)
                 reencode += ["-ac", str(max(1, ch))]
 
         reencode += [out_file]
@@ -267,7 +275,7 @@ def main():
         try:
             subprocess.run(reencode, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             ch_out = "4ch" if (upmix or ch >= 4) else f"{ch}ch"
-            print(f"✅ Wrote (AAC {ch_out}): {out_file}")
+            print(f"✅ Wrote (AAC {ch_out} + EBU loudnorm): {out_file}")
             done += 1
         except subprocess.CalledProcessError as e2:
             print(f"❌ FFmpeg failed for {os.path.basename(norm_path)}\n{e2.stderr.decode(errors='ignore')[:800]}...")
