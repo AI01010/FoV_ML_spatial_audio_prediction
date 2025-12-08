@@ -5,17 +5,19 @@ import sys
 import os
 
 # Path to the U-2-Net-Repo folder relative to cwd
-repo_path = os.path.join(os.getcwd(), "U-2-Net-Repo")  # e.g., c:\Users\mahd\Documents\FOV Prediction\U-2-Net-Repo
+repo_path = os.path.join(os.getcwd(), "../../U-2-Net-Repo")  # e.g., c:\Users\mahd\Documents\FOV Prediction\U-2-Net-Repo
 
 # Append it to sys.path
 sys.path.append(repo_path)
+
+print(f"Repo path was: {repo_path}")
 
 from model.u2net import U2NETP
 import torch
 from torchvision import transforms
 import torch.nn.functional as F
 
-MODEL_PATH = "./ModelFiles/u2netp.pth"
+MODEL_PATH = "../../ModelFiles/u2netp.pth"
 
 # Then load model as before
 u2netp = U2NETP(3, 1)
@@ -30,12 +32,13 @@ transform_u2 = transforms.Compose([
 ])
 
 # Path to the U-2-Net-Repo folder relative to cwd
-repo_path = os.path.join(os.getcwd(), "Hani-Raft-Repo/core")  # e.g., c:\Users\mahd\Documents\FOV Prediction\U-2-Net-Repo
+repo_path = os.path.join(os.getcwd(), "../../Hani-Raft-Repo/core")  # e.g., c:\Users\mahd\Documents\FOV Prediction\U-2-Net-Repo
 
 # Append it to sys.path
 sys.path.append(repo_path)
 
 import argparse
+from matplotlib import cm
 try:
     from raft import RAFT
     from utils.utils import InputPadder
@@ -58,7 +61,7 @@ args = argparse.Namespace(
     dropout2=0,
 )
 
-weights_path = "./ModelFiles/raft-small.pth"
+weights_path = "../../ModelFiles/raft-small.pth"
 
 print("Loading RAFT CPU model...")
 # Initialize model on CPU
@@ -158,17 +161,8 @@ def generate_flow_heatmap(flow):
     return heatmap
 
 
-def process_image(filename):
-    print("\n" + "="*60)
-    print(f"Processing: {filename}")
-    print("="*60)
-
-    # STEP 1: Load ERP Image
-    erp = cv2.imread(filename)
-    if erp is None:
-        print(f"⚠️ File not found: {filename}")
-        return
-    erp = cv2.cvtColor(erp, cv2.COLOR_BGR2RGB)
+def process_image(file):
+    erp = cv2.cvtColor(file, cv2.COLOR_BGR2RGB)
     H, W, _ = erp.shape
 
     # STEP 4: Run U²-NetP (Global)
@@ -203,6 +197,7 @@ def compute_video_saliency_heatmap_vectorized(prevFrame, currentFrame, frame_idx
 
     # Example usage FlowNet:
     flow = compute_flow(prevFrame, currentFrame, model)
-    saliency_map[1] = generate_flow_heatmap(flow)
+    magnitude = flow_to_magnitude_map(flow)
+    saliency_map[1] = magnitude
 
     return saliency_map

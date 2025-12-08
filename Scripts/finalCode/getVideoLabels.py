@@ -3,17 +3,14 @@ def filterDf(csv_path, participant_id, video_id):
     print(f"Reading CSV file: {csv_path}")
     df = pd.read_csv(csv_path)
     # Filter for specific participant and video
-    filtered_df = df[(df['id'] == participant_id) & (df['video'] == video_id)]
+    filtered_df = df[(df['id'] == participant_id) & (df['video'] == int(video_id))]
 
     if len(filtered_df) == 0:
         raise ValueError(f"No data found for participant {participant_id} and video {video_id}")
 
-    # Check stereo mode
-    stereo_mode = filtered_df['stereo'].iloc[0]
-
     # Sort by timestamp to ensure correct ordering
     filtered_df = filtered_df.sort_values('t').reset_index(drop=True)
-    return filterDf
+    return filtered_df
 
 # Function to convert (u, v) coordinates to tile index
 def uv_to_tile_index(u, v, rows, cols):
