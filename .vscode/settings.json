@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./U-2-Net-Repo"
+    ]
+}
