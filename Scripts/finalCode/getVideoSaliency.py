@@ -27,7 +27,7 @@ u2netp = U2NETP(3, 1).to(device)
 u2netp.load_state_dict(torch.load(MODEL_PATH, map_location=device))
 u2netp.eval()
 print("U2 Net Model ready!")
-
+""
 transform_u2 = transforms.Compose([
     transforms.ToPILImage(),
     transforms.Resize((320, 320)),
@@ -66,8 +66,8 @@ args = argparse.Namespace(
 
 weights_path = "../../ModelFiles/raft-small.pth"
 
-print("Loading RAFT CPU model...")
-# Initialize model on CPU
+print(f"Loading RAFT {device} model...")
+# Initialize model on device
 model = RAFT(args).to(device)
 
 # Clean state_dict and load weights
@@ -81,7 +81,7 @@ for k, v in state_dict.items():
 
 model.load_state_dict(clean_state, strict=False)
 model.eval()
-print("RAFT model loaded on CPU successfully.")
+print(f"RAFT model loaded on {device} successfully.")
 
 
 
@@ -117,7 +117,7 @@ def compute_flow(img1, img2, model):
                 _, flow_up = model(t1, t2, iters=12, test_mode=True)
 
             # Post-process flow: Resize back to original resolution (H, W)
-            flow = flow_up[0].permute(1,2,0).cpu().numpy()
+            flow = flow_up[0].permute(1,2,0).numpy()
 
             # The flow values need to be scaled correctly after resizing
             flow_x = cv2.resize(flow[...,0], (original_w, original_h), interpolation=cv2.INTER_LINEAR) * (original_w / flow.shape[1])
@@ -173,7 +173,7 @@ def process_image(file):
     with torch.no_grad():
         d1, *_ = u2netp(input_full)
         pred_full = F.interpolate(d1, size=(H, W), mode="bilinear", align_corners=False)
-        saliency_full = pred_full.squeeze().cpu().numpy()
+        saliency_full = pred_full.squeeze().numpy()
 
     saliency_full_resized = (saliency_full - saliency_full.min()) / (saliency_full.max() - saliency_full.min() + 1e-8)
 
