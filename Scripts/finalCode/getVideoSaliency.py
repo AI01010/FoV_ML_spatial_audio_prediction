@@ -117,7 +117,7 @@ def compute_flow(img1, img2, model):
                 _, flow_up = model(t1, t2, iters=12, test_mode=True)
 
             # Post-process flow: Resize back to original resolution (H, W)
-            flow = flow_up[0].permute(1,2,0).numpy()
+            flow = flow_up[0].permute(1,2,0).cpu().numpy()
 
             # The flow values need to be scaled correctly after resizing
             flow_x = cv2.resize(flow[...,0], (original_w, original_h), interpolation=cv2.INTER_LINEAR) * (original_w / flow.shape[1])
