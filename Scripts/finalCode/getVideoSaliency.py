@@ -173,7 +173,7 @@ def process_image(file):
     with torch.no_grad():
         d1, *_ = u2netp(input_full)
         pred_full = F.interpolate(d1, size=(H, W), mode="bilinear", align_corners=False)
-        saliency_full = pred_full.squeeze().numpy()
+        saliency_full = pred_full.squeeze().cpu().numpy()
 
     saliency_full_resized = (saliency_full - saliency_full.min()) / (saliency_full.max() - saliency_full.min() + 1e-8)
 
