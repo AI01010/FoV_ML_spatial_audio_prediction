@@ -17,11 +17,14 @@ import torch
 from torchvision import transforms
 import torch.nn.functional as F
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Using device:", device)
+
 MODEL_PATH = "../../ModelFiles/u2netp.pth"
 
 # Then load model as before
-u2netp = U2NETP(3, 1)
-u2netp.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+u2netp = U2NETP(3, 1).to(device)
+u2netp.load_state_dict(torch.load(MODEL_PATH, map_location=device))
 u2netp.eval()
 print("U2 Net Model ready!")
 
@@ -65,10 +68,10 @@ weights_path = "../../ModelFiles/raft-small.pth"
 
 print("Loading RAFT CPU model...")
 # Initialize model on CPU
-model = RAFT(args).cpu()
+model = RAFT(args).to(device)
 
 # Clean state_dict and load weights
-checkpoint = torch.load(weights_path, map_location="cpu")
+checkpoint = torch.load(weights_path, map_location=device)
 state_dict = checkpoint.get("state_dict", checkpoint)
 clean_state = {}
 for k, v in state_dict.items():
@@ -99,8 +102,8 @@ def compute_flow(img1, img2, model):
             im2 = cv2.resize(img2, (new_w, new_h))
 
             # Convert to tensor and normalize [0, 1]
-            t1 = torch.from_numpy(im1/255.).permute(2,0,1).float().unsqueeze(0)
-            t2 = torch.from_numpy(im2/255.).permute(2,0,1).float().unsqueeze(0)
+            t1 = torch.from_numpy(im1/255.).permute(2,0,1).float().unsqueeze(0).to(device)
+            t2 = torch.from_numpy(im2/255.).permute(2,0,1).float().unsqueeze(0).to(device)
 
             # Pad to multiples of 8 (required by RAFT architecture)
             padder = InputPadder(t1.shape)
@@ -166,7 +169,7 @@ def process_image(file):
     H, W, _ = erp.shape
 
     # STEP 4: Run U²-NetP (Global)
-    input_full = transform_u2(erp).unsqueeze(0)
+    input_full = transform_u2(erp).unsqueeze(0).to(device)
     with torch.no_grad():
         d1, *_ = u2netp(input_full)
         pred_full = F.interpolate(d1, size=(H, W), mode="bilinear", align_corners=False)
