@@ -2,6 +2,8 @@ import numpy as np
 import librosa
 from scipy.integrate import dblquad
 
+prevLogMel = None
+
 def compute_audio_at_direction(W: np.ndarray, X: np.ndarray, 
                                Y: np.ndarray, Z: np.ndarray,
                                top_left: tuple, bottom_right: tuple,
@@ -76,6 +78,8 @@ def computeHNR(frame):
     return 10 * np.log10(harmonic_energy / noise_energy)
 
 def processWave(wave, sampleRate):
+    global prevLogMel
+    
     windowSize = 2048
     hopSize = 100
     
@@ -96,10 +100,15 @@ def processWave(wave, sampleRate):
     contrast = librosa.feature.spectral_contrast(S = stftWave, sr=sampleRate)
     # combines the difference frequency bands to get a average contrast for that time frame
     contrast = np.mean(contrast, axis=0)
-    # basically gets how much the sound chagnes over time. Does this by getting differnece over time fimes with np.diff, squaring that value, and getting its sum
-    temporal_novelty = np.sum(np.diff(logMel, axis=1) ** 2, axis=0)
-    # do this to add an extra value cause rn, the length is T - 1, since you're getting difference between frames. So add 1 to get it to T length
-    temporal_novelty = np.insert(temporal_novelty, 0, 0)
+
+    if prevLogMel is None:
+        temporal_novelty = np.ndarray(shape = [logMel.shape[1]])
+    else:
+        numTimeSeries = min(int(logMel.shape[1] / 2), int(prevLogMel.shape[1] / 2))
+        # basically gets how much the sound chagnes over time. Does this by getting differnece over time fimes with np.diff, squaring that value, and getting its sum
+        temporal_novelty = np.sum(logMel[:, 0 : numTimeSeries] - prevLogMel[:, numTimeSeries : numTimeSeries * 2], axis=0)
+        # do this to add an extra value cause rn, the length is T - 1, since you're getting difference between frames. So add 1 to get it to T length
+        temporal_novelty = np.insert(temporal_novelty, 0, 0)
 
     # this gets how noise like a sound is, whether it's tonal or liek white noise. A tonal sound is one that just
     # stands out, like through sharp peaks.
@@ -122,6 +131,8 @@ def processWave(wave, sampleRate):
             continue
         hnr_values.append(computeHNR(frame))
     hnr_values = np.array(hnr_values)
+
+    prevLogMel = logMel
     
     return np.array([np.mean(volumeNorm), np.mean(contrast), np.mean(temporal_novelty), np.mean(hnr_values), np.mean(spectral_flatness), np.mean(centroid), np.mean(bandwidth)])
 
