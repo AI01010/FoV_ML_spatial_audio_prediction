@@ -3,3 +3,5 @@ Data/Pre-Processed-Data/0002/0002_mono_60fps.mp4 filter=lfs diff=lfs merge=lfs -
 Data/Pre-Processed-Data/0002/0002.wav filter=lfs diff=lfs merge=lfs -text
 Data/Pre-Processed-Data/0001/0001.wav filter=lfs diff=lfs merge=lfs -text
 Data/Pre-Processed-Data/0001/0001_mono_60fps.mp4 filter=lfs diff=lfs merge=lfs -text
+Data/Pre-Processed-Data/0003/0003.wav filter=lfs diff=lfs merge=lfs -text
+Data/Pre-Processed-Data/0003/0003_mono_60fps.mp4 filter=lfs diff=lfs merge=lfs -text
