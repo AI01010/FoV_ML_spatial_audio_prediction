@@ -15,7 +15,6 @@ class SaliencyTileDataset(Dataset):
 
     def __len__(self):
         totalLength = 0
-        for()
         return len(self.tile_indices)
 
     def __getitem__(self, idx):
