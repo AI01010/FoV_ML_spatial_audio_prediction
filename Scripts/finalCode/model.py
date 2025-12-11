@@ -27,7 +27,7 @@ class SaliencyTileDataset(Dataset):
     def __getitem__(self, idx):
         for i in range(len(self.tile_indices_set)):
             if(idx < len(self.tile_indices_set[i])):
-                heatmap = torch.from_numpy(self.heatmaps_set[i][idx])
+                heatmap = torch.from_numpy(self.heatmaps_set[i][idx].copy()).float()
                 tile_idx = torch.tensor(self.tile_indices_set[i][idx], dtype=torch.long)
                 return heatmap, tile_idx
             idx -= len(self.tile_indices_set[i])
@@ -114,25 +114,25 @@ class HeatmapFusionCNN(nn.Module):
                                    ce_weight=0.3, coord_weight=0.7).to(self.device)
 
         # Heatmap fusion with 1x1 conv
-        self.fusion = nn.Conv2d(num_heatmaps, 8, kernel_size=1, dtype= torch.float16)
+        self.fusion = nn.Conv2d(num_heatmaps, 8, kernel_size=1)
 
         # Lightweight feature extraction
-        self.conv1 = nn.Conv2d(8, 32, kernel_size=5, stride=4, padding=2, dtype= torch.float16)
-        self.bn1 = nn.BatchNorm2d(32, dtype= torch.float16)
+        self.conv1 = nn.Conv2d(8, 32, kernel_size=5, stride=4, padding=2)
+        self.bn1 = nn.BatchNorm2d(32)
 
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1, dtype= torch.float16)
-        self.bn2 = nn.BatchNorm2d(64, dtype= torch.float16)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1)
+        self.bn2 = nn.BatchNorm2d(64)
 
-        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1, dtype= torch.float16)
-        self.bn3 = nn.BatchNorm2d(128, dtype= torch.float16)
+        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1)
+        self.bn3 = nn.BatchNorm2d(128)
 
         # Adaptive pooling
         self.pool = nn.AdaptiveAvgPool2d((4, 4))
 
         # Classifier
-        self.fc1 = nn.Linear(128 * 4 * 4, 256, dtype= torch.float16)
+        self.fc1 = nn.Linear(128 * 4 * 4, 256)
         self.dropout = nn.Dropout(dropout)
-        self.fc2 = nn.Linear(256, self.numTiles, dtype= torch.float16)
+        self.fc2 = nn.Linear(256, self.numTiles)
 
         self.relu = nn.ReLU(inplace=True)
 
