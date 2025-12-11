@@ -183,7 +183,11 @@ class HeatmapFusionCNN(nn.Module):
         correct = 0
         total = 0
 
+
+        batchNum = 0
+
         for heatmaps, tile_indices in dataloader:
+            start_time = time.time()
             heatmaps = heatmaps.to(self.device)
             tile_indices = tile_indices.to(self.device)
 
@@ -197,7 +201,11 @@ class HeatmapFusionCNN(nn.Module):
             _, predicted = outputs.max(1)
             total += tile_indices.size(0)
             correct += predicted.eq(tile_indices).sum().item()
-            print(f"one batch passed! out of {len(dataloader)}")
+            
+            epoch_time = time.time() - start_time
+            print(f"Epoch {batchNum+1}/{len(dataloader)}: {epoch_time:.1f}s")
+            batchNum += 1
+
 
         return total_loss / len(dataloader), 100. * correct / total
     
