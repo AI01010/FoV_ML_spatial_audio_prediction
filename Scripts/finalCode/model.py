@@ -104,7 +104,7 @@ class HybridTileLoss(nn.Module):
 
         total = self.ce_weight * ce + self.coord_weight * coord
 
-        return total
+        # return total
         return ce
 
 class HeatmapFusionCNN(nn.Module):
