@@ -253,7 +253,7 @@ class HeatmapFusionCNN(nn.Module):
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=3, factor=0.5)
 
         # Training
-        num_epochs = 1
+        num_epochs = 40
         results = []
 
         print("Training started...\n")
