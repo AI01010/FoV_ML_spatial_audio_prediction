@@ -5,22 +5,30 @@ import numpy as np
 class SaliencyTileDataset(Dataset):
     """Memory-efficient dataset for saliency heatmaps"""
 
-    def __init__(self, heatmaps, tile_indices):
+    def __init__(self, heatmaps_set, tile_indices_set):
         """
         Args:
             heatmaps: numpy array of shape (N_frames, NUM_HEATMAPS, H, W)
             tile_indices: numpy array of shape (N_frames,) with tile indices [0-143]
         """
-        self.tile_indices = tile_indices.astype(np.int64)
+        self.heatmaps_set = heatmaps_set
+        self.tile_indices_set = tile_indices_set
 
     def __len__(self):
         totalLength = 0
-        return len(self.tile_indices)
+        for set in self.tile_indices_set:
+            totalLength += len(set)
+        return totalLength
 
     def __getitem__(self, idx):
-        heatmap = torch.from_numpy(self.heatmaps[idx])
-        tile_idx = torch.tensor(self.tile_indices[idx], dtype=torch.long)
-        return heatmap, tile_idx
+        for i in range(len(self.tile_indices_set)):
+            if(idx < len(self.tile_indices_set[i])):
+                heatmap = torch.from_numpy(self.heatmaps_set[i][idx])
+                tile_idx = torch.tensor(self.tile_indices_set[i][idx], dtype=torch.long)
+                return heatmap, tile_idx
+            idx -= len(self.tile_indices_set[i])
+        return None, None
+        
 
 
 class HeatmapFusionCNN(nn.Module):
