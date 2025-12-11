@@ -61,7 +61,12 @@ class TileCoordinateLoss(nn.Module):
         true_x = (actualTilesBatch % self.tiles_x).unsqueeze(1)              # (B, 1)
         true_y = (actualTilesBatch // self.tiles_x).unsqueeze(1)             # (B, 1)
 
-        vectorizedDistances = torch.sqrt((true_x - self.predictedXCoords) ** 2 + (true_y - self.predictedYCoords) ** 2)
+        dx = torch.abs(true_x - self.predictedXCoords)
+        dx = torch.minimum(dx, self.tiles_x - dx)
+
+        dy = true_y - self.predictedYCoords
+
+        vectorizedDistances = torch.sqrt(dx**2 + dy**2)
 
         finalLossPerBatchPerClass = vectorizedDistances * vectorizedProbabilities
 
@@ -201,9 +206,9 @@ class HeatmapFusionCNN(nn.Module):
             _, predicted = outputs.max(1)
             total += tile_indices.size(0)
             correct += predicted.eq(tile_indices).sum().item()
-            
+
             epoch_time = time.time() - start_time
-            print(f"Epoch {batchNum+1}/{len(dataloader)}: {epoch_time:.1f}s")
+            print(f"Batch {batchNum+1}/{len(dataloader)}: {epoch_time:.1f}s")
             batchNum += 1
 
 
