@@ -1,0 +1,6 @@
+[submodule "Hani-Raft-Repo"]
+	path = Hani-Raft-Repo
+	url = https://github.com/HaniKamran/RAFT
+[submodule "U-2-Net-Repo"]
+	path = U-2-Net-Repo
+	url = https://github.com/xuebinqin/U-2-Net
