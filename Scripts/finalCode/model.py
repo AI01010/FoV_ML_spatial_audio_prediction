@@ -159,6 +159,7 @@ class HeatmapFusionCNN(nn.Module):
         self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x):
+        print("before fusion:", x.min().item(), x.max().item())
         x = self.fusion(x)
         print("After fusion:", x.min().item(), x.max().item())
         x = self.relu(x)
