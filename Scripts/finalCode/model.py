@@ -215,6 +215,11 @@ class HeatmapFusionCNN(nn.Module):
         batchNum = 0
 
         for heatmaps, tile_indices in dataloader:
+            if torch.isnan(heatmaps).any() or torch.isinf(heatmaps).any():
+                print("NaN/Inf in heatmaps batch detected!")
+                print("Indices:", torch.isnan(heatmaps) | torch.isinf(heatmaps))
+                continue  # skip this batch
+
             start_time = time.time()
             heatmaps = heatmaps.to(self.device)
             tile_indices = tile_indices.to(self.device)
