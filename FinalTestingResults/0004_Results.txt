@@ -1,0 +1,16 @@
+Processing frame 5/3598 (sample 0/2)
+Predicted tile was 75, actual tile was 65!
+Num correct thus far is 0, num total thus far is 1
+Euclidean distance from true was 6.0
+Processing frame 10/3598 (sample 1/2)
+Predicted tile was 77, actual tile was 66!
+Num correct thus far is 0, num total thus far is 2
+Euclidean distance from true was 5.0
+Confusion Matrix (Predicted vs True):
+Classes: [65 66 75 77]
+[[0 0 1 0]
+ [0 0 0 1]
+ [0 0 0 0]
+ [0 0 0 0]]
+Avg distance was: 5.50
+Accuracy was: 0.00
