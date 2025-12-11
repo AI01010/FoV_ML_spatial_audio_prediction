@@ -56,8 +56,9 @@ class TileCoordinateLoss(nn.Module):
         self.predictedYCoords = predictedYCoords
 
     def forward(self, predictedTilesBatch, actualTilesBatch):
-        # we subtract by the maximum to watch out for extremely large values
         stable_logits = predictedTilesBatch - predictedTilesBatch.max(dim=1, keepdim=True).values
+        stable_logits = torch.clamp(stable_logits, min=-50, max=50)  # tighter clamp
+        vectorizedProbabilities = F.softmax(stable_logits, dim=1)
         vectorizedProbabilities = F.softmax(stable_logits, dim=1)
 
         # <-- check for tiny/NaN values here
@@ -158,31 +159,36 @@ class HeatmapFusionCNN(nn.Module):
         self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x):
-        # Fuse heatmaps
         x = self.fusion(x)
+        print("After fusion:", x.min().item(), x.max().item())
         x = self.relu(x)
 
-        # Feature extraction
         x = self.conv1(x)
+        print("After conv1:", x.min().item(), x.max().item())
         x = self.bn1(x)
         x = self.relu(x)
 
         x = self.conv2(x)
+        print("After conv2:", x.min().item(), x.max().item())
         x = self.bn2(x)
         x = self.relu(x)
 
         x = self.conv3(x)
+        print("After conv3:", x.min().item(), x.max().item())
         x = self.bn3(x)
         x = self.relu(x)
 
-        # Pool and classify
         x = self.pool(x)
+        print("After pool:", x.min().item(), x.max().item())
+
         x = x.view(x.size(0), -1)
 
         x = self.fc1(x)
+        print("After fc1:", x.min().item(), x.max().item())
         x = self.relu(x)
         x = self.dropout(x)
         x = self.fc2(x)
+        print("After fc2 (output):", x.min().item(), x.max().item())
 
         return x
     
@@ -214,7 +220,7 @@ class HeatmapFusionCNN(nn.Module):
 
             optimizer.zero_grad()
             outputs = self(heatmaps)
-            
+
             if torch.isnan(outputs).any():
                 print("NaN in model outputs!")
                 print("Min:", outputs.min().item())
@@ -226,7 +232,7 @@ class HeatmapFusionCNN(nn.Module):
             torch.nn.utils.clip_grad_norm_(self.parameters(), max_norm=5.0)
             optimizer.step()
 
-            print(outputs.min().item(), outputs.max().item())
+            print("Outputs are these: ", outputs.min().item(), outputs.max().item())
 
 
             total_loss += loss.item()
