@@ -105,7 +105,7 @@ class HybridTileLoss(nn.Module):
         total = self.ce_weight * ce + self.coord_weight * coord
 
         # return total
-        return self.ce_weight
+        return ce
 
 class HeatmapFusionCNN(nn.Module):
     """Lightweight CNN for fusing saliency heatmaps"""
