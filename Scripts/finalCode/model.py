@@ -176,7 +176,7 @@ class HeatmapFusionCNN(nn.Module):
         x = idx % self.numCols
         return x, y
         
-    def train_epoch(self, dataloader, criterion, optimizer):
+    def train_epoch(self, dataloader, optimizer):
         """Train for one epoch"""
         self.train()
         total_loss = 0
@@ -189,7 +189,7 @@ class HeatmapFusionCNN(nn.Module):
 
             optimizer.zero_grad()
             outputs = self(heatmaps)
-            loss = criterion(outputs, tile_indices)
+            loss = self.criterion(outputs, tile_indices)
             loss.backward()
             optimizer.step()
 
@@ -206,7 +206,7 @@ class HeatmapFusionCNN(nn.Module):
         tx, ty = self.tile_index_to_coords(true_idx)
         return np.sqrt((px - tx)**2 + (py - ty)**2)
 
-    def validate(self, dataloader, criterion):
+    def validate(self, dataloader):
         """Validate the model"""
         self.eval()
         total_loss = 0
@@ -220,7 +220,7 @@ class HeatmapFusionCNN(nn.Module):
                 tile_indices = tile_indices.to(self.device)
 
                 outputs = self(heatmaps)
-                loss = criterion(outputs, tile_indices)
+                loss = self.criterion(outputs, tile_indices)
 
                 total_loss += loss.item()
                 _, predicted = outputs.max(1)
@@ -248,8 +248,8 @@ class HeatmapFusionCNN(nn.Module):
         for epoch in range(num_epochs):
             epoch_start = time.time()
 
-            train_loss, train_acc = self.train_epoch(train_loader, self.criterion, optimizer, self.device)
-            val_loss, val_acc, avg_tile_dist = self.validate(val_loader, self.criterion, self.device)
+            train_loss, train_acc = self.train_epoch(train_loader, optimizer)
+            val_loss, val_acc, avg_tile_dist = self.validate(val_loader)
 
             scheduler.step(val_loss)
             epoch_time = time.time() - epoch_start
