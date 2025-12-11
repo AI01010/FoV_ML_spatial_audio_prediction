@@ -243,7 +243,9 @@ class HeatmapFusionCNN(nn.Module):
                 total += tile_indices.size(0)
                 correct += predicted.eq(tile_indices).sum().item()
 
-                print(f"Predicted one was {predicted}, actual is {tile_indices}")
+                probs = torch.softmax(outputs, dim=1)  # softmax along the class dimension
+                print(f"Predicted stuff is {probs}, actual is {tile_indices}")
+                
 
                 for pred, true in zip(predicted.cpu().numpy(), tile_indices.cpu().numpy()):
                     tile_distances.append(self.tile_distance(pred, true))
