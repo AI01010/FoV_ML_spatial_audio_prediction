@@ -56,7 +56,18 @@ class TileCoordinateLoss(nn.Module):
         self.predictedYCoords = predictedYCoords
 
     def forward(self, predictedTilesBatch, actualTilesBatch):
-        vectorizedProbabilities = F.softmax(predictedTilesBatch, dim = 1)
+        # we subtract by the maximum to watch out for extremely large values
+        stable_logits = predictedTilesBatch - predictedTilesBatch.max(dim=1, keepdim=True).values
+        vectorizedProbabilities = F.softmax(stable_logits, dim=1)
+
+        # <-- check for tiny/NaN values here
+        if torch.isnan(vectorizedProbabilities).any():
+            print("NaN in probabilities detected!")
+            print("Min before NaN:", vectorizedProbabilities.min().item())
+            print("Max before NaN:", vectorizedProbabilities.max().item())
+        elif (vectorizedProbabilities < 1e-300).any():
+            print("Very small probabilities detected:", vectorizedProbabilities[vectorizedProbabilities < 1e-300])
+
 
         # Coordinates of true tile per batch element
         true_x = (actualTilesBatch % self.tiles_x).unsqueeze(1)              # (B, 1)
@@ -104,11 +115,11 @@ class HybridTileLoss(nn.Module):
 
         total = self.ce_weight * ce + self.coord_weight * coord
 
-        if(total > 1000 or total < 1000):
+        if(total > 1000 or total < 0.0001):
             print(f"Uh, so CE is {ce} while coord is {coord}")
 
         # return total
-        return ce
+        return total
 
 class HeatmapFusionCNN(nn.Module):
     """Lightweight CNN for fusing saliency heatmaps"""
@@ -203,8 +214,16 @@ class HeatmapFusionCNN(nn.Module):
 
             optimizer.zero_grad()
             outputs = self(heatmaps)
+            
+            if torch.isnan(outputs).any():
+                print("NaN in model outputs!")
+                print("Min:", outputs.min().item())
+                print("Max:", outputs.max().item())
+
             loss = self.criterion(outputs, tile_indices)
             loss.backward()
+            # clip the gradients to prevent exploding gradients
+            torch.nn.utils.clip_grad_norm_(self.parameters(), max_norm=5.0)
             optimizer.step()
 
             print(outputs.min().item(), outputs.max().item())
