@@ -104,7 +104,7 @@ class HybridTileLoss(nn.Module):
 
         total = self.ce_weight * ce + self.coord_weight * coord
 
-        # return total
+        return total
         return ce
 
 class HeatmapFusionCNN(nn.Module):
@@ -242,6 +242,8 @@ class HeatmapFusionCNN(nn.Module):
                 _, predicted = outputs.max(1)
                 total += tile_indices.size(0)
                 correct += predicted.eq(tile_indices).sum().item()
+
+                print(f"Predicted one was {predicted}, actual is {tile_indices}")
 
                 for pred, true in zip(predicted.cpu().numpy(), tile_indices.cpu().numpy()):
                     tile_distances.append(self.tile_distance(pred, true))
