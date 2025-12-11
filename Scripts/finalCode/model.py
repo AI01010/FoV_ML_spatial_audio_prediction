@@ -31,6 +31,7 @@ class SaliencyTileDataset(Dataset):
                 tile_idx = torch.tensor(self.tile_indices_set[i][idx], dtype=torch.long)
                 return heatmap, tile_idx
             idx -= len(self.tile_indices_set[i])
+        print("THIS SHOULD NEVER PRINT")
         return None, None
     
 class TileCoordinateLoss(nn.Module):
