@@ -103,15 +103,15 @@ class HybridTileLoss(nn.Module):
 class HeatmapFusionCNN(nn.Module):
     """Lightweight CNN for fusing saliency heatmaps"""
 
-    def __init__(self, num_heatmaps=9, numCols = 16, numRows = 9, device = "cuda", dropout=0.3):
+    def __init__(self, num_heatmaps=9, numCols = 16, numRows = 9, theDevice = "cuda", dropout=0.3):
         super(HeatmapFusionCNN, self).__init__()
 
         self.numCols = numCols
         self.numRows = numRows
         self.numTiles = numCols * numRows
-        self.device = device
+        self.device = theDevice
         self.criterion = HybridTileLoss(tiles_x=self.numCols, tiles_y=self.numRows,
-                                   ce_weight=0.3, coord_weight=0.7).to(device)
+                                   ce_weight=0.3, coord_weight=0.7).to(self.device)
 
         # Heatmap fusion with 1x1 conv
         self.fusion = nn.Conv2d(num_heatmaps, 8, kernel_size=1)
@@ -176,7 +176,7 @@ class HeatmapFusionCNN(nn.Module):
         x = idx % self.numCols
         return x, y
         
-    def train_epoch(self, dataloader, criterion, optimizer, device):
+    def train_epoch(self, dataloader, criterion, optimizer):
         """Train for one epoch"""
         self.train()
         total_loss = 0
@@ -184,8 +184,8 @@ class HeatmapFusionCNN(nn.Module):
         total = 0
 
         for heatmaps, tile_indices in dataloader:
-            heatmaps = heatmaps.to(device)
-            tile_indices = tile_indices.to(device)
+            heatmaps = heatmaps.to(self.device)
+            tile_indices = tile_indices.to(self.device)
 
             optimizer.zero_grad()
             outputs = self(heatmaps)
@@ -200,7 +200,7 @@ class HeatmapFusionCNN(nn.Module):
 
         return total_loss / len(dataloader), 100. * correct / total
     
-    def tile_distance(self, pred_idx, true_idx, tiles_x):
+    def tile_distance(self, pred_idx, true_idx):
         """Calculate tile distance"""
         px, py = self.tile_index_to_coords(pred_idx)
         tx, ty = self.tile_index_to_coords(true_idx)
@@ -216,8 +216,8 @@ class HeatmapFusionCNN(nn.Module):
 
         with torch.no_grad():
             for heatmaps, tile_indices in dataloader:
-                heatmaps = heatmaps.to(device)
-                tile_indices = tile_indices.to(device)
+                heatmaps = heatmaps.to(self.device)
+                tile_indices = tile_indices.to(self.device)
 
                 outputs = self(heatmaps)
                 loss = criterion(outputs, tile_indices)
@@ -234,7 +234,7 @@ class HeatmapFusionCNN(nn.Module):
         return total_loss / len(dataloader), 100. * correct / total, avg_distance
 
 
-    def trainModel(self, train_loader, val_loader, device):
+    def trainModel(self, train_loader, val_loader):
         optimizer = optim.Adam(self.parameters(), lr=0.001, weight_decay=1e-5)
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=3, factor=0.5)
 
@@ -248,8 +248,8 @@ class HeatmapFusionCNN(nn.Module):
         for epoch in range(num_epochs):
             epoch_start = time.time()
 
-            train_loss, train_acc = self.train_epoch(train_loader, self.criterion, optimizer, device)
-            val_loss, val_acc, avg_tile_dist = self.validate(val_loader, self.criterion, device)
+            train_loss, train_acc = self.train_epoch(train_loader, self.criterion, optimizer, self.device)
+            val_loss, val_acc, avg_tile_dist = self.validate(val_loader, self.criterion, self.device)
 
             scheduler.step(val_loss)
             epoch_time = time.time() - epoch_start
@@ -269,7 +269,7 @@ class HeatmapFusionCNN(nn.Module):
                     f"Dist {avg_tile_dist:.2f} | {epoch_time:.1f}s")
 
             # Clear cache periodically
-            if device == "cuda":
+            if self.device == "cuda":
                 torch.cuda.empty_cache()
 
         total_time = time.time() - start_time
