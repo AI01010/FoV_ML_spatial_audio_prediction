@@ -197,6 +197,7 @@ class HeatmapFusionCNN(nn.Module):
             _, predicted = outputs.max(1)
             total += tile_indices.size(0)
             correct += predicted.eq(tile_indices).sum().item()
+            print(f"one batch passed! out of {len(dataloader)}")
 
         return total_loss / len(dataloader), 100. * correct / total
     
