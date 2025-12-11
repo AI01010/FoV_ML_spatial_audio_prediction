@@ -104,6 +104,9 @@ class HybridTileLoss(nn.Module):
 
         total = self.ce_weight * ce + self.coord_weight * coord
 
+        if(total > 1000 or total < 1000):
+            print(f"Uh, so CE is {ce} while coord is {coord}")
+
         # return total
         return ce
 
@@ -204,6 +207,9 @@ class HeatmapFusionCNN(nn.Module):
             loss.backward()
             optimizer.step()
 
+            print(outputs.min().item(), outputs.max().item())
+
+
             total_loss += loss.item()
             _, predicted = outputs.max(1)
             total += tile_indices.size(0)
@@ -255,7 +261,7 @@ class HeatmapFusionCNN(nn.Module):
 
 
     def trainModel(self, train_loader, val_loader):
-        optimizer = optim.Adam(self.parameters(), lr=0.001, weight_decay=1e-5)
+        optimizer = optim.Adam(self.parameters(), lr=0.0001, weight_decay=1e-5)
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=3, factor=0.5)
 
         # Training
