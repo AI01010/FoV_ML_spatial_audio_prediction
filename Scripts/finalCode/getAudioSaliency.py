@@ -105,7 +105,7 @@ def processWave(wave, sampleRate):
         temporal_novelty = np.ndarray(shape = [logMel.shape[1]])
     else:
         numTimeSeries = min(int(logMel.shape[1] / 2), int(prevLogMel.shape[1] / 2))
-        # basically gets how much the sound chagnes over time. Does this by getting differnece over time fimes with np.diff, squaring that value, and getting its sum
+        # basically gets how much the sound chagnes over time. Does this by getting differnece over time fimes with np.diff, squaring that value, and getting its sum   
         temporal_novelty = np.sum(logMel[:, 0 : numTimeSeries] - prevLogMel[:, numTimeSeries : numTimeSeries * 2], axis=0)
         # do this to add an extra value cause rn, the length is T - 1, since you're getting difference between frames. So add 1 to get it to T length
         temporal_novelty = np.insert(temporal_novelty, 0, 0)
